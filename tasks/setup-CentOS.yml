@@ -1,0 +1,14 @@
+
+- name: "Add MariaDb repo"
+  yum_repository:
+    name: mariadb
+    description: mariadb
+    baseurl: "{{ galera_yumrepo_src }}"
+    gpgkey: "{{ galera_yumrepo_key }}"
+    gpgcheck: "{{ galera_yumrepo_key is defined }}"
+  when: galera_add_yumrepo
+
+- name: Install MariaDB packages
+  yum:
+    name: '{{ galera_yum_packages }}'
+    state: '{{ galera_package_state }}'

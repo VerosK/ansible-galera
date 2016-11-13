@@ -1,0 +1,6 @@
+
+- name: install packages
+  yum:
+    name: '{{ galera_apt_packages }}'
+    state: '{{ galera_package_state }}'
+

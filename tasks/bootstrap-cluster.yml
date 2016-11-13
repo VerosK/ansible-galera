@@ -1,0 +1,53 @@
+
+- name: "Check cluster init flag"
+  file:
+    dest: '{{ galera_initcluster_flag }}'
+    state: file
+  register: _cluster_started
+  ignore_errors: yes
+
+- name: "Stop mysql when cluster init is required"
+  service:
+    name: 'mysql'
+    state: stopped
+  when: _cluster_started.failed
+
+- name: "Create wsrep on master"
+  copy:
+    content: "[mysqld]\nwsrep_new_cluster=1\n"
+    dest: /etc/my.cnf.d/init_cluster.cnf
+  when: >
+      _cluster_started.failed
+      and galera_start_master|default(False)
+
+- name: "Bootstrap MySQL master"
+  service:
+    name: mariadb
+    state: started
+  when: >
+      _cluster_started.failed
+      and galera_start_master|default(False)
+
+- name: "Disable wsrep on master"
+  file:
+    dest: /etc/my.cnf.d/init_cluster.cnf
+    state: absent
+
+- name: "Touch cluster init flag"
+  copy:
+    content: "{{ ansible_date_time.iso8601 }}"
+    dest: "{{ galera_initcluster_flag }}"
+  when: _cluster_started.failed
+
+- name: "Start Galera arbiter"
+  service:
+      name: garb
+      state: started
+      enabled: yes
+  when: galera_start_arbiter|default(False)
+
+- name: "Start mysql"
+  service:
+    name: 'mysql'
+    state: started
+  when: _cluster_started.failed

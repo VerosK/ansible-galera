@@ -1,0 +1,6 @@
+---
+galera_server_config: "/etc/my.cnf.d/server.cnf"
+galera_arbiter_config: "/etc/sysconfig/garb"
+galera_service_name: 'mysql'
+
+galera_wsrep_provider: "/usr/lib64/galera/libgalera_smm.so"

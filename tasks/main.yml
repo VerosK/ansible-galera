@@ -1,0 +1,46 @@
+---
+- name: "galera_cluster_name should be defined"
+  assert:
+    that:
+      - galera_cluster_name is defined
+      - galera_master_node is defined
+
+- name: "galera_cluster_nodes should be list of addresses (or hostnames)"
+  assert:
+    that: galera_cluster_nodes is iterable
+
+- name: "Include distribution specific variables"
+  include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+      - "../vars/{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
+      - '{{ ansible_distribution }}-{{ansible_distribution_major_version}}.yml'
+      - '{{ ansible_distribution }}.yml'
+      - '{{ ansible_os_family }}.yml'
+      - 'default.yml'
+      path:
+      - '../vars'
+
+- name: "Check distribution is supported"
+  fail:
+    msg: >
+        Target distribution
+        {{ ansible_distribution }}-{{ ansible_distribution_version }}
+        is not supported.
+  when: "{{ galera_unsupported_distribution|default(False) }}"
+
+- name: "Install distribution specific packages"
+  include: "setup-{{ ansible_distribution }}.yml"
+
+- name: "Create my.cnf config"
+  template:
+    src: server/server.cnf.j2
+    dest: '{{ galera_server_config }}'
+    backup: yes
+
+- name: "Create arbiter config"
+  template:
+    src: server/arbiter.config.j2
+    dest: '{{ galera_arbiter_config }}'
+
+- include: bootstrap-cluster.yml

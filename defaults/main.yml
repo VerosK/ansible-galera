@@ -1,0 +1,43 @@
+---
+galera_deb_packages: 
+    - FIXME
+
+galera_yum_packages: 
+    - MariaDB-server
+    - MariaDB-client
+    - MySQL-python
+    - galera
+    - rsync
+    - socat
+# not sure, if these are needed
+    - nc
+    - lsof
+
+galera_package_state: installed
+
+galera_ports:
+    - 3306/tcp # mysql
+    - 4567/tcp # Galera Replication
+    - 873/tcp # Rsync
+    - 4444/tcp # State Snapshot Transfer (SST).
+
+# Listen on all interfaces
+galera_bind_address: '0.0.0.0'
+galera_cluster_bind_address: '0.0.0.0'
+galera_cluster_name: maria
+
+galera_enable_monitoring_script: false
+
+galera_service_name: mysql
+galera_service_state: started
+galera_service_enabled: true
+
+galera_add_yumrepo: true
+
+# stable
+galera_yumrepo_src: "http://yum.mariadb.org/10.1/centos/$releasever/$basearch"
+galera_yumrepo_key: https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+
+galera_initcluster_flag: '/etc/mycnf-cluster-{{ galera_cluster_name }}.started'
+
+galera_port: "4567"
