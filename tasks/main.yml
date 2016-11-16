@@ -32,11 +32,19 @@
 - name: "Install distribution specific packages"
   include: "setup-{{ ansible_distribution }}.yml"
 
+- name: Enable ports on firewalld
+  firewalld:
+    permanent: true
+    port: '{{ item }}'
+    zone: '{{ galera_firewalld_zone }}'
+    state: enabled
+  with_items: '{{ galera_firewalld_ports }}'
+  when: galera_firewalld_add_rules
+
 - name: "Create my.cnf config"
   template:
     src: server/server.cnf.j2
     dest: '{{ galera_server_config }}'
-    backup: yes
 
 - name: "Create arbiter config"
   template:

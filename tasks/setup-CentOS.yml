@@ -12,3 +12,9 @@
   yum:
     name: '{{ galera_yum_packages }}'
     state: '{{ galera_package_state }}'
+
+- name: Create log directory
+  file:
+    name: "{{ galera_log_directory }}"
+    state: directory
+    owner: '{{ galera_log_owner }}'

@@ -10,14 +10,14 @@
   service:
     name: 'mysql'
     state: stopped
-  when: _cluster_started.failed
+  when: _cluster_started|failed
 
-- name: "Create wsrep on master"
+- name: "Create init_cluster on master"
   copy:
     content: "[mysqld]\nwsrep_new_cluster=1\n"
     dest: /etc/my.cnf.d/init_cluster.cnf
   when: >
-      _cluster_started.failed
+      _cluster_started|failed
       and galera_start_master|default(False)
 
 - name: "Bootstrap MySQL master"
@@ -25,10 +25,10 @@
     name: mariadb
     state: started
   when: >
-      _cluster_started.failed
+      _cluster_started|failed
       and galera_start_master|default(False)
 
-- name: "Disable wsrep on master"
+- name: "Disable init_cluster on master"
   file:
     dest: /etc/my.cnf.d/init_cluster.cnf
     state: absent
@@ -37,7 +37,7 @@
   copy:
     content: "{{ ansible_date_time.iso8601 }}"
     dest: "{{ galera_initcluster_flag }}"
-  when: _cluster_started.failed
+  when: _cluster_started|failed
 
 - name: "Start Galera arbiter"
   service:
@@ -50,4 +50,3 @@
   service:
     name: 'mysql'
     state: started
-  when: _cluster_started.failed
