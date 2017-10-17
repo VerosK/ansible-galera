@@ -1,4 +1,4 @@
-verosk.galera-cluster
+VerosK.galera-cluster
 =====================
 
 This is proof of concept role (still working) to setup MariaDB galera role.
@@ -30,6 +30,9 @@ Don't forget to set-up variables
     galera_start_database: True
     galera_start_master: True
     galera_node_address: "192.168.9.41"
+
+You can also use `mysql_databases`, `mysql_users` 
+from `geerlingguy.mysql` role.
 
 License
 -------
