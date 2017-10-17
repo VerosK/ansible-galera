@@ -27,7 +27,7 @@
         Target distribution
         {{ ansible_distribution }}-{{ ansible_distribution_version }}
         is not supported.
-  when: "{{ galera_unsupported_distribution|default(False) }}"
+  when: galera_unsupported_distribution|default(False)
 
 - name: "Install distribution specific packages"
   include: "setup-{{ ansible_distribution }}.yml"
@@ -46,9 +46,23 @@
     src: server/server.cnf.j2
     dest: '{{ galera_server_config }}'
 
+- name: Copy my.cnf override files into include directory.
+  template:
+    src: "{{ item.src }}.j2"
+    dest: "{{ galera_server_config_dir }}/{{ item.src | basename }}"
+    owner: root
+    group: root
+    mode: 0644
+    force: "{{ item.force | default(False) }}"
+  with_items: "{{ mysql_config_include_files }}"
+  notify: restart MySQL
+
 - name: "Create arbiter config"
   template:
     src: server/arbiter.config.j2
     dest: '{{ galera_arbiter_config }}'
 
 - include: bootstrap-cluster.yml
+
+- include: create-users.yml
+

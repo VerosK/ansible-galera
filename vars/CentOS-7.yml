@@ -1,5 +1,6 @@
 ---
 galera_server_config: "/etc/my.cnf.d/server.cnf"
+galera_server_config_dir: "/etc/my.cnf.d"
 galera_arbiter_config: "/etc/sysconfig/garb"
 galera_service_name: 'mysql'
 

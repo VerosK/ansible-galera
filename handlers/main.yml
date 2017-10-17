@@ -2,4 +2,4 @@
 - name: restart MySQL
   service:
     name: '{{ galera_service_name }}'
-    state: resarted
+    state: restarted

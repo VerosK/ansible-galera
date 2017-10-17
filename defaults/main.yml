@@ -52,3 +52,17 @@ galera_firewalld_ports:
 
 galera_log_directory: /var/log/mariadb
 galera_log_owner: mysql
+
+# Databases.
+mysql_databases: []
+#   - name: example
+#     collation: utf8_general_ci
+#     encoding: utf8
+#     replicate: 1
+
+# Users.
+mysql_users: []
+#   - name: example
+#     host: 127.0.0.1
+#     password: secret
+#     priv: *.*:USAGE
