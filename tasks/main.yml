@@ -65,4 +65,5 @@
 - include: bootstrap-cluster.yml
 
 - include: create-users.yml
+  tags: galera-users
 
